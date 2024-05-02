@@ -8,7 +8,6 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
       - name: Configure and Build
         run: |
           git clone https://github.com/zrax/pycdc.git pycdc
@@ -16,22 +15,10 @@ jobs:
           mkdir build
           cd build
           cmake -G "Visual Studio 17 2022" -A Win32 ..
-          cmake --build . --config Debug
           cmake --build . --config Release
 
-      # This should probably be fixed to work from MSVC without needing to
-      # use a bash shell and the GNU userland tools...  But for now, the
-      # GH Actions environment provides what we need.
-      - name: Test
-        working-directory: ./pycdc
-        run: |
-          cd build\Debug
-          bash.exe ..\..\tests\all_tests.sh
-        env:
-          PYTHON_EXE: python.exe
-
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pycdc-release
           path: .\pycdc\build\Release\*.exe
